@@ -95,8 +95,8 @@ button,a{-webkit-tap-highlight-color:transparent}
 @keyframes sway{0%{transform:translate3d(-26px,0,0) rotate(-11deg)}45%{transform:translate3d(22px,0,0) rotate(9deg)}100%{transform:translate3d(-9px,0,0) rotate(-4deg)}}
 @keyframes tumble{0%{transform:rotate(0deg) rotateX(0deg) scale(.96)}35%{transform:rotate(145deg) rotateX(54deg) scale(1.02)}68%{transform:rotate(275deg) rotateX(-35deg) scale(.92)}100%{transform:rotate(410deg) rotateX(20deg) scale(1)}}
 
-.back{position:absolute;right:18px;bottom:16px;z-index:10;border:1px solid rgba(20,20,20,.16);background:rgba(243,237,224,.58);color:rgba(10,10,10,.68);padding:8px 11px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(8px);opacity:.42;transition:opacity .2s,border-color .2s}
-.back:hover,.back:focus-visible{opacity:1;border-color:rgba(20,20,20,.42);outline:none}
+.back{position:absolute;right:22px;bottom:20px;z-index:10;border:1px solid rgba(199,239,69,.72);background:rgba(5,5,5,.78);color:#f7f3ea;padding:11px 15px;font-size:10px;font-weight:700;letter-spacing:.20em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:.96;box-shadow:0 8px 24px rgba(0,0,0,.28),0 0 0 1px rgba(0,0,0,.12);transition:transform .2s ease,background .2s ease,border-color .2s ease,color .2s ease}
+.back:hover,.back:focus-visible{transform:translateY(-2px);background:rgba(199,239,69,.94);color:#050505;border-color:rgba(5,5,5,.75);outline:none}
 .flash{position:absolute;inset:0;z-index:99;pointer-events:none;background:#f4efe6;opacity:0}
 .flash.play{animation:flash .52s var(--ease) both}
 @keyframes flash{0%{opacity:0}28%{opacity:.9}58%{opacity:.07}100%{opacity:0}}
@@ -142,7 +142,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     </a>
 
     <div class="leaf-field" id="leafField" aria-hidden="true"></div>
-    <button class="back" id="back" type="button">Back</button>
+    <button class="back" id="back" type="button">← Back</button>
   </section>
   <div class="flash" id="flash"></div>
 </div>
