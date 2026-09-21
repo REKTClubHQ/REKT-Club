@@ -96,8 +96,8 @@ button,a{-webkit-tap-highlight-color:transparent}
 @keyframes sway{0%{transform:translate3d(-26px,0,0) rotate(-11deg)}45%{transform:translate3d(22px,0,0) rotate(9deg)}100%{transform:translate3d(-9px,0,0) rotate(-4deg)}}
 @keyframes tumble{0%{transform:rotate(0deg) rotateX(0deg) scale(.96)}35%{transform:rotate(145deg) rotateX(54deg) scale(1.02)}68%{transform:rotate(275deg) rotateX(-35deg) scale(.92)}100%{transform:rotate(410deg) rotateX(20deg) scale(1)}}
 
-.back{position:absolute;right:18px;bottom:16px;z-index:10;border:1px solid rgba(20,20,20,.16);background:rgba(243,237,224,.58);color:rgba(10,10,10,.68);padding:8px 11px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(8px);opacity:.42;transition:opacity .2s,border-color .2s}
-.back:hover,.back:focus-visible{opacity:1;border-color:rgba(20,20,20,.42);outline:none}
+.back{position:absolute;right:18px;bottom:18px;z-index:30;border:1px solid rgba(199,239,69,.82);background:rgba(5,5,5,.88);color:#f7f3ea;padding:10px 13px;font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:1;box-shadow:0 8px 24px rgba(0,0,0,.24);text-shadow:0 1px 2px rgba(0,0,0,.45);transition:transform .2s,background .2s,border-color .2s}
+.back:hover,.back:focus-visible{opacity:1;transform:translateY(-2px);background:rgba(5,5,5,.96);border-color:rgba(199,239,69,1);outline:none}
 .flash{position:absolute;inset:0;z-index:99;pointer-events:none;background:#f4efe6;opacity:0}
 .flash.play{animation:flash .52s var(--ease) both}
 @keyframes flash{0%{opacity:0}28%{opacity:.9}58%{opacity:.07}100%{opacity:0}}
@@ -139,13 +139,16 @@ button,a{-webkit-tap-highlight-color:transparent}
     left:max(14px,env(safe-area-inset-left));
     right:auto;
     top:auto;
-    bottom:max(16px,env(safe-area-inset-bottom));
-    padding:11px 14px;
-    font-size:9px;
-    background:rgba(5,5,5,.80);
+    bottom:max(20px,calc(env(safe-area-inset-bottom) + 8px));
+    z-index:30;
+    padding:12px 15px;
+    font-size:10px;
+    font-weight:800;
+    background:rgba(5,5,5,.92);
     color:#f7f3ea;
-    border-color:rgba(199,239,69,.68);
-    opacity:.96;
+    border-color:rgba(199,239,69,.90);
+    opacity:1;
+    box-shadow:0 8px 24px rgba(0,0,0,.28);
   }
 }
 @media (prefers-reduced-motion: reduce){
