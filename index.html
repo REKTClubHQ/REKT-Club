@@ -102,23 +102,62 @@ button,a{-webkit-tap-highlight-color:transparent}
 @keyframes flash{0%{opacity:0}28%{opacity:.9}58%{opacity:.07}100%{opacity:0}}
 
 @media (max-width: 1024px) {
-      #landing { background:#e8dfcb; }
-      .art-fill { inset:-12%; width:124%; height:124%; object-position:center top; filter:blur(32px) saturate(.9) brightness(.94); opacity:.52; }
-      .art-stage { inset:0; align-items:flex-start; justify-content:center; }
-      .art-main { top:0; left:50%; width:auto; height:100%; min-height:0; max-width:none; object-fit:unset; object-position:unset; animation:heroPanMobile 17s ease-in-out infinite alternate; }
-      @keyframes heroPanMobile {
-        0% { transform:translateX(calc(-54% - 8px)); }
-        100% { transform:translateX(calc(-54% + 8px)); }
-      }
-    }
+  #landing { background:#e8dfcb; }
+  .art-fill {
+    inset:-12%;
+    width:124%;
+    height:124%;
+    object-position:center top;
+    filter:blur(30px) saturate(.88) brightness(.90);
+    opacity:.58;
+    transform:scale(1.08);
+  }
+  .art-stage {
+    inset:0;
+    align-items:flex-start;
+    justify-content:center;
+  }
 }
 @media (max-width:800px){
+  /* MOBILE ONLY: poster-scale artwork instead of forcing the desktop image to fill portrait height */
+  #landing::after{
+    background:
+      linear-gradient(to bottom,rgba(0,0,0,.025),transparent 34%,rgba(232,223,203,.04) 48%,rgba(232,223,203,.30) 72%,rgba(232,223,203,.55) 100%),
+      radial-gradient(circle at 50% 34%,transparent 38%,rgba(27,22,12,.055) 100%);
+  }
+  .art-stage{overflow:hidden}
+  .art-stage::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    background:linear-gradient(to bottom,transparent 0%,transparent 48%,rgba(232,223,203,.12) 57%,rgba(232,223,203,.62) 78%,rgba(232,223,203,.92) 100%);
+  }
+  .art-main{
+    top:7svh;
+    left:50%;
+    width:auto;
+    height:clamp(245px,40svh,330px);
+    min-height:0;
+    max-width:none;
+    object-fit:unset;
+    object-position:unset;
+    transform:translateX(-50%);
+    filter:drop-shadow(0 18px 30px rgba(24,18,8,.14));
+    animation:heroPanMobile 18s ease-in-out infinite alternate;
+  }
+  @keyframes heroPanMobile{
+    0%{transform:translate3d(calc(-50% - 8px),0,0)}
+    50%{transform:translate3d(-50%,-3px,0)}
+    100%{transform:translate3d(calc(-50% + 8px),0,0)}
+  }
   .intro-logo{width:clamp(90px,28vw,135px)}
   .brand{font-size:clamp(38px,11vw,60px)}
   .tagline{font-size:9px;letter-spacing:.22em}
   .enter{bottom:6.5vh;font-size:9px;letter-spacing:.22em}
   .x-link{width:40px;height:40px;top:12px;right:12px}
-  .back{right:12px;bottom:12px;padding:10px 13px;font-size:9px}
+  .back{left:12px;right:auto;bottom:12px;padding:10px 13px;font-size:9px}
 }
 @media (prefers-reduced-motion: reduce){
   .page,.flash,.leaf-flight,.leaf-sway,.leaf-tumble,.art-main,.intro-logo,.brand,.brand::after,.tagline,.enter,.intro-particle,#intro::after,.intro-wrap::before{animation:none!important;transition:none!important}
