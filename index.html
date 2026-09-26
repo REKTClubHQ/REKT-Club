@@ -112,8 +112,6 @@ const savedCommentUrl=localStorage.getItem(commentStorageKey)||'';
 if(savedCommentUrl){
   commentLink.value=savedCommentUrl;
   commentProof.classList.add('visible');
-  savedTasks.comment=true;
-  setTaskState('comment','done');
 }
 commentAction.addEventListener('click',()=>{
   if(!savedTasks.comment){
@@ -136,13 +134,24 @@ function parseXStatusUrl(value){
 verifyCommentLink.addEventListener('click',()=>{
   const parsed=parseXStatusUrl(commentLink.value);
   const s=document.getElementById('wlStatus');
-  if(!parsed){s.textContent='Paste a valid X comment link.';return}
+  const currentUser=document.getElementById('xuser').value.trim().replace(/^@/,'').toLowerCase();
+  if(!currentUser){s.textContent='Fill your X username first.';setTaskState('comment','pending');updateSubmitState();return}
+  if(!parsed){s.textContent='Paste a valid X comment link.';setTaskState('comment','pending');updateSubmitState();return}
+  if(parsed.handle!==currentUser){
+    savedTasks.comment=false;
+    localStorage.setItem(taskStorageKey,JSON.stringify(savedTasks));
+    localStorage.removeItem(commentStorageKey);
+    setTaskState('comment','pending');
+    s.textContent='Comment link must come from @'+currentUser+'.';
+    updateSubmitState();
+    return
+  }
   commentLink.value=parsed.url;
   localStorage.setItem(commentStorageKey,parsed.url);
   savedTasks.comment=true;
   localStorage.setItem(taskStorageKey,JSON.stringify(savedTasks));
   setTaskState('comment','done');
-  s.textContent='Comment link added.';
+  s.textContent='Comment link verified for @'+currentUser+'.';
   updateSubmitState();
 });
 
@@ -159,10 +168,24 @@ function getWhitelistReadiness(){
 }
 function updateSubmitState(){
   if(submitButton.dataset.submitting==='1'||submitButton.textContent==='Submitted ✓')return;
-  const {ready}=getWhitelistReadiness();
-  submitButton.disabled=!ready;
+  const state=getWhitelistReadiness();
+  if(state.parsedComment&&state.parsedComment.handle===state.u&&commentLink.value.trim()){
+    savedTasks.comment=true;
+    localStorage.setItem(taskStorageKey,JSON.stringify(savedTasks));
+    setTaskState('comment','done');
+  }
+  submitButton.disabled=!state.ready;
 }
-document.getElementById('xuser').addEventListener('input',updateSubmitState);
+document.getElementById('xuser').addEventListener('input',()=>{
+  const currentUser=document.getElementById('xuser').value.trim().replace(/^@/,'').toLowerCase();
+  const parsed=parseXStatusUrl(commentLink.value);
+  if(savedTasks.comment===true&&(!parsed||parsed.handle!==currentUser)){
+    savedTasks.comment=false;
+    localStorage.setItem(taskStorageKey,JSON.stringify(savedTasks));
+    setTaskState('comment','pending');
+  }
+  updateSubmitState();
+});
 document.getElementById('wallet').addEventListener('input',updateSubmitState);
 commentLink.addEventListener('input',updateSubmitState);
 updateSubmitState();
