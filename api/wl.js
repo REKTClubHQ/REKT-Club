@@ -13,9 +13,11 @@ export default async function handler(req, res) {
 
   const rawX = typeof req.body?.x_username === 'string' ? req.body.x_username : '';
   const rawWallet = typeof req.body?.wallet_address === 'string' ? req.body.wallet_address : '';
+  const rawCommentUrl = typeof req.body?.comment_url === 'string' ? req.body.comment_url : '';
 
   const xUsername = rawX.trim().replace(/^@/, '').toLowerCase();
   const walletAddress = rawWallet.trim().toLowerCase();
+  const commentUrl = rawCommentUrl.trim();
 
   if (!/^[A-Za-z0-9_]{1,15}$/.test(xUsername)) {
     return res.status(400).json({ error: 'Invalid X username.' });
@@ -23,6 +25,22 @@ export default async function handler(req, res) {
 
   if (!/^0x[a-f0-9]{40}$/.test(walletAddress)) {
     return res.status(400).json({ error: 'Invalid wallet address.' });
+  }
+
+  let normalizedCommentUrl;
+  try {
+    const url = new URL(commentUrl);
+    const host = url.hostname.toLowerCase().replace(/^www\./, '');
+    const parts = url.pathname.split('/').filter(Boolean);
+    if ((host !== 'x.com' && host !== 'twitter.com') || parts.length < 3 || parts[1] !== 'status' || !/^[0-9]+$/.test(parts[2]) || !/^[A-Za-z0-9_]{1,15}$/.test(parts[0])) {
+      throw new Error('invalid');
+    }
+    if (parts[0].toLowerCase() !== xUsername) {
+      return res.status(400).json({ error: 'Comment link must match the submitted X username.' });
+    }
+    normalizedCommentUrl = `https://x.com/${parts[0]}/status/${parts[2]}`;
+  } catch (_) {
+    return res.status(400).json({ error: 'Invalid X comment link.' });
   }
 
   try {
@@ -37,9 +55,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         x_username: xUsername,
         wallet_address: walletAddress,
-        follow_claimed: true,
-        like_claimed: true,
-        repost_claimed: true
+        comment_url: normalizedCommentUrl
       })
     });
 
@@ -52,7 +68,7 @@ export default async function handler(req, res) {
       const body = await response.json();
       detail = [body?.code, body?.message, body?.details].filter(Boolean).join(' ');
       if (body?.code === '23505') {
-        return res.status(409).json({ error: 'This wallet or X username is already registered.' });
+        return res.status(409).json({ error: 'This wallet, X username, or comment link is already registered.' });
       }
     } catch (_) {}
 
