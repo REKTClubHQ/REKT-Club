@@ -23,3 +23,12 @@ alter table public.whitelist_entries enable row level security;
 -- No public INSERT/SELECT policies are intentionally created.
 -- The website writes through the server-side /api/wl endpoint using the
 -- Supabase secret/service-role credential stored only in Vercel.
+
+
+-- Explicit API privileges.
+-- The browser never talks to this table directly.
+revoke all on table public.whitelist_entries from anon, authenticated;
+grant select, insert, update, delete on table public.whitelist_entries to service_role;
+
+-- Identity sequence used by the id column.
+grant usage, select on sequence public.whitelist_entries_id_seq to service_role;
