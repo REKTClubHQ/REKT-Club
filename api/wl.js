@@ -14,6 +14,7 @@ export default async function handler(req, res) {
   const rawX = typeof req.body?.x_username === 'string' ? req.body.x_username : '';
   const rawWallet = typeof req.body?.wallet_address === 'string' ? req.body.wallet_address : '';
   const rawCommentUrl = typeof req.body?.comment_url === 'string' ? req.body.comment_url : '';
+  const socialTasks = req.body?.social_tasks;
 
   const xUsername = rawX.trim().replace(/^@/, '').toLowerCase();
   const walletAddress = rawWallet.trim().toLowerCase();
@@ -25,6 +26,17 @@ export default async function handler(req, res) {
 
   if (!/^0x[a-f0-9]{40}$/.test(walletAddress)) {
     return res.status(400).json({ error: 'Invalid wallet address.' });
+  }
+
+  const socialTasksComplete =
+    socialTasks &&
+    socialTasks.follow === true &&
+    socialTasks.like === true &&
+    socialTasks.repost === true &&
+    socialTasks.comment === true;
+
+  if (!socialTasksComplete) {
+    return res.status(400).json({ error: 'Complete all social tasks before requesting access.' });
   }
 
   let normalizedCommentUrl;
