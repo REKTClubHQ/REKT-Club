@@ -5,7 +5,9 @@ export default async function handler(req, res) {
   }
 
   const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseSecret = process.env.SUPABASE_SECRET_KEY;
+  const supabaseSecret =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SECRET_KEY;
 
   if (!supabaseUrl || !supabaseSecret) {
     return res.status(503).json({ error: 'Whitelist database is not configured.' });
