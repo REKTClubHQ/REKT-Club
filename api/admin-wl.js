@@ -43,14 +43,19 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PATCH') {
-      const id = Number(req.body?.id);
       const status = String(req.body?.status || '').trim();
+      const rawIds = Array.isArray(req.body?.ids) ? req.body.ids : [req.body?.id];
+      const ids = [...new Set(rawIds.map(Number).filter(id => Number.isInteger(id) && id > 0))];
 
-      if (!Number.isInteger(id) || id <= 0 || !VALID_STATUSES.has(status)) {
-        return res.status(400).json({ error: 'Invalid id or status.' });
+      if (!ids.length || !VALID_STATUSES.has(status)) {
+        return res.status(400).json({ error: 'Invalid id(s) or status.' });
       }
 
-      const upstream = await fetch(base + '?id=eq.' + encodeURIComponent(id), {
+      const filter = ids.length === 1
+        ? '?id=eq.' + encodeURIComponent(ids[0])
+        : '?id=in.(' + ids.map(id => encodeURIComponent(id)).join(',') + ')';
+
+      const upstream = await fetch(base + filter, {
         method: 'PATCH',
         headers: {
           ...headers,
