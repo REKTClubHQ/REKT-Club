@@ -86,7 +86,10 @@ export default async function handler(req, res) {
     } catch (_) {}
 
     console.error('Supabase whitelist insert failed:', response.status, detail);
-    return res.status(502).json({ error: 'Could not save whitelist request.' });
+    const previewDetail = process.env.VERCEL_ENV === 'preview'
+      ? ` [Supabase ${response.status}${detail ? ': ' + detail : ''}]`
+      : '';
+    return res.status(502).json({ error: 'Could not save whitelist request.' + previewDetail });
   } catch (error) {
     console.error('Whitelist API error:', error);
     return res.status(502).json({ error: 'Could not reach whitelist database.' });
