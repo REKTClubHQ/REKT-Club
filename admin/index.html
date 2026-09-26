@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#070707">
+<title>REKT CLUB — WL Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=League+Gothic&display=swap" rel="stylesheet">
+<style>
+:root{--lime:#c7ef45;--paper:#eee7d8;--ink:#090909;--muted:#918d83}
+*{box-sizing:border-box}body{margin:0;background:#070707;color:#f4efe5;font-family:Inter,system-ui,Arial,sans-serif}
+.shell{max-width:1500px;margin:auto;padding:28px}.top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;border-bottom:1px solid #292929;padding-bottom:22px}
+.kicker{font:700 10px "IBM Plex Mono",monospace;letter-spacing:.2em;color:var(--lime);text-transform:uppercase}
+h1{margin:5px 0 0;font:400 clamp(48px,6vw,84px)/.9 "League Gothic",sans-serif;letter-spacing:.01em}
+.auth{display:flex;gap:8px}.auth input,.search{background:#101010;border:1px solid #303030;color:#fff;padding:12px 13px;outline:none}
+.auth button,.export,.filter{border:1px solid #393939;background:#111;color:#eee;padding:11px 14px;font:700 9px "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.auth button:hover,.export:hover,.filter.active{background:var(--lime);color:#050505;border-color:var(--lime)}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#262626;margin:22px 0}.stat{background:#0d0d0d;padding:15px}.stat small{display:block;color:#777;font:600 9px "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase}.stat strong{display:block;margin-top:5px;font-size:24px}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.search{min-width:280px;flex:1}.exports{margin-left:auto;display:flex;gap:8px}
+.table{border:1px solid #242424}.row{display:grid;grid-template-columns:56px 170px minmax(220px,1fr) 105px 145px 330px;gap:12px;align-items:center;padding:11px 13px;border-bottom:1px solid #202020}.row:last-child{border-bottom:0}.head{background:#101010;color:#777;font:700 9px "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase}.cell{min-width:0;font-size:12px}.wallet{font-family:"IBM Plex Mono",monospace;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.proof{color:var(--lime);text-decoration:none;font:700 9px "IBM Plex Mono",monospace;text-transform:uppercase}.date{font-size:10px;color:#777}.actions{display:flex;gap:5px;justify-content:flex-end}.act{border:1px solid #333;background:transparent;color:#aaa;padding:7px 8px;font:700 8px "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.act:hover{border-color:var(--lime);color:var(--lime)}.act.on{background:var(--lime);border-color:var(--lime);color:#050505}.empty{padding:40px;text-align:center;color:#777}.msg{min-height:18px;margin:10px 0;color:var(--lime);font:600 10px "IBM Plex Mono",monospace}
+@media(max-width:950px){.row{grid-template-columns:44px 120px 1fr 90px}.row .date,.row .actions{grid-column:auto/span 2}.exports{margin-left:0;width:100%}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top">
+    <div><div class="kicker">REKT CLUB / INTERNAL</div><h1>WL CURATION</h1></div>
+    <div class="auth"><input id="adminKey" type="password" placeholder="Admin access key"><button id="loadBtn">Load</button></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><small>Total</small><strong id="sTotal">0</strong></div>
+    <div class="stat"><small>Pending</small><strong id="sPending">0</strong></div>
+    <div class="stat"><small>GTD</small><strong id="sGtd">0</strong></div>
+    <div class="stat"><small>FCFS</small><strong id="sFcfs">0</strong></div>
+    <div class="stat"><small>Not Selected</small><strong id="sNo">0</strong></div>
+  </div>
+
+  <div class="toolbar">
+    <input class="search" id="search" placeholder="Search X username or wallet">
+    <button class="filter active" data-filter="all">All</button>
+    <button class="filter" data-filter="pending">Pending</button>
+    <button class="filter" data-filter="gtd">GTD</button>
+    <button class="filter" data-filter="fcfs">FCFS</button>
+    <button class="filter" data-filter="not_selected">Not Selected</button>
+    <div class="exports">
+      <button class="export" data-export="gtd">Export GTD CSV</button>
+      <button class="export" data-export="fcfs">Export FCFS CSV</button>
+    </div>
+  </div>
+  <div class="msg" id="msg"></div>
+
+  <div class="table">
+    <div class="row head"><div>ID</div><div>X</div><div>Wallet</div><div>Proof</div><div>Applied</div><div style="text-align:right">Curation</div></div>
+    <div id="rows"></div>
+  </div>
+</div>
+<script>
+let entries=[],filter='all';
+const keyInput=document.getElementById('adminKey'),rows=document.getElementById('rows'),msg=document.getElementById('msg'),search=document.getElementById('search');
+keyInput.value=sessionStorage.getItem('rekt-admin-key')||'';
+
+function key(){return keyInput.value.trim()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function counts(){
+  const c={pending:0,gtd:0,fcfs:0,not_selected:0};
+  entries.forEach(e=>{if(c[e.status]!==undefined)c[e.status]++});
+  document.getElementById('sTotal').textContent=entries.length;
+  document.getElementById('sPending').textContent=c.pending;
+  document.getElementById('sGtd').textContent=c.gtd;
+  document.getElementById('sFcfs').textContent=c.fcfs;
+  document.getElementById('sNo').textContent=c.not_selected;
+}
+function render(){
+  counts();
+  const q=search.value.trim().toLowerCase();
+  const list=entries.filter(e=>(filter==='all'||e.status===filter)&&(!q||e.x_username.toLowerCase().includes(q)||e.wallet_address.toLowerCase().includes(q)));
+  if(!list.length){rows.innerHTML='<div class="empty">No entries in this view.</div>';return}
+  rows.innerHTML=list.map(e=>`
+    <div class="row">
+      <div class="cell">${e.id}</div>
+      <div class="cell">@${esc(e.x_username)}</div>
+      <div class="cell wallet" title="${esc(e.wallet_address)}">${esc(e.wallet_address)}</div>
+      <div class="cell"><a class="proof" href="${esc(e.comment_url)}" target="_blank" rel="noopener">View ↗</a></div>
+      <div class="cell date">${new Date(e.created_at).toLocaleString()}</div>
+      <div class="cell actions">
+        ${['pending','gtd','fcfs','not_selected'].map(s=>`<button class="act ${e.status===s?'on':''}" data-id="${e.id}" data-status="${s}">${s==='not_selected'?'No':s.toUpperCase()}</button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+async function load(){
+  if(!key()){msg.textContent='Enter admin access key.';return}
+  msg.textContent='Loading…';
+  const r=await fetch('/api/admin-wl',{headers:{'x-admin-key':key()}});
+  let data={};try{data=await r.json()}catch(e){}
+  if(!r.ok){msg.textContent=data.error||'Could not load.';return}
+  sessionStorage.setItem('rekt-admin-key',key());
+  entries=Array.isArray(data)?data:[];
+  msg.textContent='Loaded '+entries.length+' applicants.';
+  render();
+}
+async function setStatus(id,status){
+  msg.textContent='Updating…';
+  const r=await fetch('/api/admin-wl',{method:'PATCH',headers:{'Content-Type':'application/json','x-admin-key':key()},body:JSON.stringify({id,status})});
+  let data={};try{data=await r.json()}catch(e){}
+  if(!r.ok){msg.textContent=data.error||'Update failed.';return}
+  const i=entries.findIndex(e=>e.id===id);
+  if(i>=0)entries[i].status=status;
+  msg.textContent='Status updated to '+status.toUpperCase()+'.';
+  render();
+}
+function exportCsv(status){
+  const selected=entries.filter(e=>e.status===status);
+  if(!selected.length){msg.textContent='No '+status.toUpperCase()+' entries to export.';return}
+  const body=selected.map(e=>e.wallet_address).join('\n')+'\n';
+  const blob=new Blob([body],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='rekt-'+status+'-opensea.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);
+  msg.textContent='Exported '+selected.length+' '+status.toUpperCase()+' wallets.';
+}
+document.getElementById('loadBtn').addEventListener('click',load);
+search.addEventListener('input',render);
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));render()}));
+document.querySelectorAll('[data-export]').forEach(b=>b.addEventListener('click',()=>exportCsv(b.dataset.export)));
+rows.addEventListener('click',e=>{const b=e.target.closest('[data-status]');if(b)setStatus(Number(b.dataset.id),b.dataset.status)});
+if(key())load();
+</script>
+</body>
+</html>
