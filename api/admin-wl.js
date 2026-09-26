@@ -1,9 +1,9 @@
 const VALID_STATUSES = new Set(['pending','gtd','fcfs','not_selected']);
 
+import { isAdminRequest } from './admin-auth.js';
+
 function adminOk(req) {
-  const expected = process.env.ADMIN_ACCESS_KEY;
-  const provided = req.headers['x-admin-key'];
-  return Boolean(expected && provided && provided === expected);
+  return isAdminRequest(req);
 }
 
 function getSupabaseConfig() {
