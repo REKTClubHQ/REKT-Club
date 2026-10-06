@@ -26,9 +26,9 @@
 
 /* MINT LIVE ARTWORK */
 #live{background:#292929}
-.live-art{position:absolute;inset:0;display:grid;place-items:center;background:#292929;overflow:hidden}
-.live-frame{position:relative;width:min(100vw,201.812vh);aspect-ratio:1782/883;max-width:100vw;max-height:100vh}
-.live-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;display:block}
+.live-art{position:absolute;inset:0;background:#292929;overflow:hidden}
+.live-frame{position:absolute;left:0;top:0;height:100vh;width:201.812vh}
+.live-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block}
 .live-opensea-hotspot{position:absolute;left:4.62%;top:61.55%;width:20.25%;height:4.55%;z-index:8;display:flex;align-items:center;gap:.62em;text-decoration:none;cursor:pointer;padding:0 1.05%;color:#f3eee4;font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-size:clamp(9px,.98vw,18px);font-weight:700;letter-spacing:.045em;text-transform:uppercase;white-space:nowrap;transition:filter .2s ease,transform .2s ease}
 .live-opensea-hotspot .live-dot{width:.72em;height:.72em;min-width:.72em;border-radius:50%;background:var(--lime);box-shadow:0 0 .45em rgba(199,239,69,.95),0 0 1.05em rgba(199,239,69,.6);animation:liveGlow 1.55s ease-in-out infinite}
 .live-opensea-hotspot:hover{filter:brightness(1.15);transform:translateY(-1px)}
