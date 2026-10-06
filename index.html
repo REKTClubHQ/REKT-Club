@@ -25,14 +25,17 @@
 #live{background:var(--paper);color:#090909}.live-wrap{position:absolute;inset:0;display:grid;grid-template-columns:1.2fr .8fr}.live-hero{position:relative;padding:7vh 5.5vw;overflow:hidden}.live-hero:before{content:"MINT";position:absolute;left:-.03em;bottom:-.16em;font-size:min(34vw,520px);line-height:.72;font-weight:1000;letter-spacing:-.08em;color:rgba(199,239,69,.62)}.live-copy{position:relative;z-index:2}.live-copy h1{font-size:clamp(76px,10vw,165px);line-height:.78;margin:20px 0 18px;letter-spacing:-.065em;text-transform:uppercase}.live-copy p{max-width:560px;color:rgba(0,0,0,.56);line-height:1.65;font-size:13px}.live-panel{position:relative;background:#080808;color:#f3eee4;padding:7vh 4.3vw;display:flex;flex-direction:column;justify-content:center}.live-status{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;color:var(--lime)}.dot{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 5px rgba(199,239,69,.08);animation:pulseDot 1.6s ease-in-out infinite}@keyframes pulseDot{50%{box-shadow:0 0 0 10px rgba(199,239,69,0)}}.live-panel h2{font-size:48px;line-height:.92;margin:22px 0 10px;letter-spacing:-.04em}.mint-data{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.14);margin:26px 0}.mint-data div{background:#101010;padding:16px}.mint-data small{display:block;color:rgba(255,255,255,.38);font-size:9px;letter-spacing:.15em;text-transform:uppercase}.mint-data strong{display:block;margin-top:5px;font-size:15px}.opensea{display:flex;align-items:center;justify-content:space-between;text-decoration:none;background:var(--lime);color:#080808;padding:17px 18px;font-size:11px;font-weight:1000;letter-spacing:.18em;text-transform:uppercase;transition:.2s}.opensea:hover{background:var(--lime2);transform:translateY(-2px)}.verify{margin-top:12px;font-size:9px;line-height:1.5;color:rgba(255,255,255,.38)}
 
 /* MINT LIVE ARTWORK */
-#live{background:#e8deca}
-.live-art{position:absolute;inset:0;display:grid;place-items:center;background:#e8deca;overflow:hidden}
-.live-art img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
-.live-opensea-hotspot{position:absolute;left:2.55%;top:62.35%;width:21.8%;height:5.3%;z-index:8;display:block;cursor:pointer}
-.live-opensea-hotspot:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
-@media(max-width:900px){
-  .live-art img{object-fit:contain;background:#e8deca}
-  .live-opensea-hotspot{left:2.55%;top:62.35%;width:21.8%;height:5.3%}
+#live{background:#292929}
+.live-art{position:absolute;inset:0;display:grid;place-items:center;background:#292929;overflow:hidden}
+.live-frame{position:relative;width:min(100vw,201.812vh);aspect-ratio:1782/883;max-width:100vw;max-height:100vh}
+.live-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;display:block}
+.live-opensea-hotspot{position:absolute;left:4.62%;top:61.55%;width:20.25%;height:4.55%;z-index:8;display:flex;align-items:center;gap:.62em;text-decoration:none;cursor:pointer;padding:0 1.05%;color:#f3eee4;font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-size:clamp(9px,.98vw,18px);font-weight:700;letter-spacing:.045em;text-transform:uppercase;white-space:nowrap;transition:filter .2s ease,transform .2s ease}
+.live-opensea-hotspot .live-dot{width:.72em;height:.72em;min-width:.72em;border-radius:50%;background:var(--lime);box-shadow:0 0 .45em rgba(199,239,69,.95),0 0 1.05em rgba(199,239,69,.6);animation:liveGlow 1.55s ease-in-out infinite}
+.live-opensea-hotspot:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.live-opensea-hotspot:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+@keyframes liveGlow{0%,100%{opacity:.82;box-shadow:0 0 .35em rgba(199,239,69,.9),0 0 .8em rgba(199,239,69,.45)}50%{opacity:1;box-shadow:0 0 .6em rgba(199,239,69,1),0 0 1.4em rgba(199,239,69,.78)}}
+@media(max-width:700px){
+  .live-opensea-hotspot{font-size:clamp(6px,1.7vw,10px);gap:.5em}
 }
 
 /* PREVIEW LIFECYCLE */
@@ -74,8 +77,13 @@
 <section class="page" id="closed" data-page="closed"><div class="closed-bg"></div><a class="x-link" href="https://x.com/rektclubHQ" target="_blank" rel="noopener noreferrer" aria-label="REKT CLUB on X"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M18.244 2H21.5l-7.115 8.13L22.75 22h-6.55l-5.13-6.71L5.2 22H1.94l7.61-8.7L1.52 2h6.716l4.638 6.13L18.244 2Zm-1.143 17.91h1.804L7.255 3.99H5.32L17.1 19.91Z"/></svg></a><div class="leaf-field closed-leaf-field" id="closedLeafField"></div></section>
 <section class="page" id="live" data-page="live">
   <div class="live-art">
-    <img src="assets/mint-live.webp" alt="REKT CLUB Mint Live artwork">
-    <a class="live-opensea-hotspot" href="https://opensea.io/" target="_blank" rel="noopener noreferrer" aria-label="Live now on OpenSea"></a>
+    <div class="live-frame">
+      <img src="https://res.cloudinary.com/rvyiestw/image/upload/v1791293894/mint-live2.png" alt="REKT CLUB Mint Live artwork">
+      <a class="live-opensea-hotspot" href="https://opensea.io/" target="_blank" rel="noopener noreferrer" aria-label="Live now on OpenSea">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>Live Now on OpenSea</span>
+      </a>
+    </div>
   </div>
 </section>
 <div class="preview-nav" id="previewNav"><div class="preview-label">Preview Lifecycle</div><div class="sep"></div><button data-preview="intro">01 Intro</button><button data-preview="landing">02 Art</button><button data-preview="whitelist">03 WL</button><button data-preview="closed">04 Closed</button><button data-preview="live">05 Live</button></div>
